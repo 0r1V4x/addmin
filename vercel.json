@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "source": "/(.*)",
+      "destination": "/10.html"
+    }
+  ]
+}
