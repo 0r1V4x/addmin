@@ -15,7 +15,6 @@
         }
         body { background-color: #f0f2f5; margin: 0; }
         
-        /* --- Mobile First Approach with Advanced UI --- */
         .sidebar {
             position: fixed;
             top: 0;
@@ -46,6 +45,10 @@
             margin: 4px 8px;
             border-radius: 12px;
             padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            color: #a0a8c0;
+            text-decoration: none;
         }
         .sidebar a:hover { 
             background-color: rgba(79, 70, 229, 0.15); 
@@ -69,7 +72,6 @@
             .main-content-container { display: flex; }
         }
 
-        /* Modern Card Styles */
         .stat-card { 
             background: white; 
             border-radius: 20px; 
@@ -111,17 +113,12 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            text-align: left;
         }
         td { 
             padding: 16px;
             background: white;
             border-bottom: none;
-        }
-        tr { border-radius: 16px; }
-        
-        @keyframes fadeScale {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
         }
         
         .badge {
@@ -134,21 +131,6 @@
         .badge-success { background: #d1fae5; color: #065f46; }
         .badge-warning { background: #fed7aa; color: #92400e; }
         .badge-danger { background: #fee2e2; color: #991b1b; }
-        
-        .metric-tile {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 24px;
-            border-radius: 24px;
-        }
-        
-        .skeleton {
-            background: linear-gradient(90deg, #e2e8f0 25%, #edf2f7 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
         .input-field {
             background: white;
@@ -163,6 +145,15 @@
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
             outline: none;
         }
+        
+        .skeleton {
+            background: linear-gradient(90deg, #e2e8f0 25%, #edf2f7 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+            height: 20px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body>
@@ -184,28 +175,28 @@
                     <p class="text-indigo-300 text-sm mt-1">Admin Pro Panel</p>
                 </div>
                 <nav class="mt-4 px-3">
-                    <a href="#" class="nav-link flex items-center" data-page="dashboard-page" data-title="Dashboard">
+                    <a href="#" class="nav-link" data-page="dashboard-page" data-title="Dashboard">
                         <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>Dashboard
                     </a>
-                    <a href="#" class="nav-link flex items-center" data-page="users-page" data-title="User Management">
+                    <a href="#" class="nav-link" data-page="users-page" data-title="User Management">
                         <i data-lucide="users" class="w-5 h-5 mr-3"></i>Users
                     </a>
-                    <a href="#" class="nav-link flex items-center" data-page="withdrawals-page" data-title="Withdrawals">
+                    <a href="#" class="nav-link" data-page="withdrawals-page" data-title="Withdrawals">
                         <i data-lucide="wallet" class="w-5 h-5 mr-3"></i>Withdrawals
                     </a>
-                    <a href="#" class="nav-link flex items-center" data-page="transactions-page" data-title="Transactions">
+                    <a href="#" class="nav-link" data-page="transactions-page" data-title="Transactions">
                         <i data-lucide="repeat" class="w-5 h-5 mr-3"></i>Transactions
                     </a>
-                    <a href="#" class="nav-link flex items-center" data-page="notifications-page" data-title="Notifications">
+                    <a href="#" class="nav-link" data-page="notifications-page" data-title="Notifications">
                         <i data-lucide="bell" class="w-5 h-5 mr-3"></i>Notifications
                     </a>
-                    <a href="#" class="nav-link flex items-center" data-page="analytics-page" data-title="Analytics">
+                    <a href="#" class="nav-link" data-page="analytics-page" data-title="Analytics">
                         <i data-lucide="trending-up" class="w-5 h-5 mr-3"></i>Analytics
                     </a>
-                    <a href="#" class="nav-link flex items-center" data-page="tasks-page" data-title="Task Manager">
+                    <a href="#" class="nav-link" data-page="tasks-page" data-title="Task Manager">
                         <i data-lucide="check-square" class="w-5 h-5 mr-3"></i>Task Manager
                     </a>
-                    <a href="#" class="nav-link flex items-center" data-page="settings-page" data-title="Settings">
+                    <a href="#" class="nav-link" data-page="settings-page" data-title="Settings">
                         <i data-lucide="settings" class="w-5 h-5 mr-3"></i>Settings
                     </a>
                     <a href="#" id="admin-logout-btn" class="flex items-center mt-8 text-red-400 hover:bg-red-500/10">
@@ -265,11 +256,11 @@
                     <!-- Charts Row -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                         <div class="stat-card p-6">
-                            <h3 class="font-semibold mb-4">User Growth</h3>
+                            <h3 class="font-semibold mb-4">User Growth (Last 7 Days)</h3>
                             <canvas id="userChart" height="200"></canvas>
                         </div>
                         <div class="stat-card p-6">
-                            <h3 class="font-semibold mb-4">Withdrawal Trends</h3>
+                            <h3 class="font-semibold mb-4">Withdrawal Status</h3>
                             <canvas id="withdrawalChart" height="200"></canvas>
                         </div>
                     </div>
@@ -281,7 +272,7 @@
                     </div>
                 </div>
 
-                <!-- Users Page (Enhanced) -->
+                <!-- Users Page -->
                 <div id="users-page" class="page">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold">User Management</h2>
@@ -301,7 +292,7 @@
                     </div>
                 </div>
 
-                <!-- Withdrawals Page (Enhanced) -->
+                <!-- Withdrawals Page -->
                 <div id="withdrawals-page" class="page">
                     <div class="flex gap-2 mb-6">
                         <button class="filter-btn btn btn-primary" data-status="pending">Pending</button>
@@ -318,7 +309,7 @@
                     </div>
                 </div>
 
-                <!-- Transactions Page (New) -->
+                <!-- Transactions Page -->
                 <div id="transactions-page" class="page">
                     <h2 class="text-2xl font-bold mb-6">All Transactions</h2>
                     <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
@@ -331,7 +322,7 @@
                     </div>
                 </div>
 
-                <!-- Analytics Page (New) -->
+                <!-- Analytics Page -->
                 <div id="analytics-page" class="page">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div class="stat-card p-6">
@@ -359,7 +350,7 @@
                     </div>
                 </div>
 
-                <!-- Task Manager Page (New) -->
+                <!-- Task Manager Page -->
                 <div id="tasks-page" class="page">
                     <h2 class="text-2xl font-bold mb-6">Task Manager</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -397,7 +388,7 @@
                                 <textarea id="notification-message" rows="4" class="input-field" placeholder="Type your message..."></textarea>
                             </div>
                             <div class="mb-4">
-                                <label class="block font-semibold mb-2">Icon (optional)</label>
+                                <label class="block font-semibold mb-2">Icon</label>
                                 <select id="notification-icon" class="input-field">
                                     <option value="bell">Bell</option>
                                     <option value="gift">Gift</option>
@@ -410,7 +401,7 @@
                     </div>
                 </div>
 
-                <!-- Settings Page (Enhanced) -->
+                <!-- Settings Page -->
                 <div id="settings-page" class="page">
                     <div class="max-w-2xl">
                         <div class="stat-card p-6">
@@ -430,14 +421,14 @@
                                 <label class="block font-semibold mb-2">Coin Value</label>
                                 <div class="flex gap-2">
                                     <input type="number" id="coin-value-coins" class="input-field" placeholder="Coins">
-                                    <span class="font-semibold text-gray-600 self-center">= ৳</span>
-                                    <input type="number" id="coin-value-taka" class="input-field" placeholder="Taka">
+                                    <span class="font-semibold text-gray-600 self-center">= ₹</span>
+                                    <input type="number" id="coin-value-inr" class="input-field" placeholder="Rupees">
                                 </div>
                             </div>
                             
                             <div class="mb-6">
                                 <label class="block font-semibold mb-2">Payment Methods (comma-separated)</label>
-                                <input type="text" id="payment-methods" class="input-field" placeholder="bKash,Nagad,Rocket,UPI">
+                                <input type="text" id="payment-methods" class="input-field" placeholder="UPI,bKash,PayPal">
                             </div>
                             
                             <div class="mb-6">
@@ -461,7 +452,7 @@
         </div>
     </div>
     
-    <!-- Login View (Enhanced) -->
+    <!-- Login View -->
     <div id="admin-login-view" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
         <div class="w-full max-w-md p-8 space-y-6 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20">
             <div class="text-center">
@@ -498,32 +489,38 @@
         </div>
     </div>
 
-    <script type="module">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase config
         const firebaseConfig = {
-  apiKey: "AIzaSyBRtu3m76E_iMzt4qxT_ZA6ePwDZr6PVPM",
-  authDomain: "earnify-0.firebaseapp.com",
-  projectId: "earnify-0",
-  storageBucket: "earnify-0.firebasestorage.app",
-  messagingSenderId: "939562179015",
-  appId: "1:939562179015:web:50af680cc0b2a52041e1e2",
-  measurementId: "G-2K89P4XX6F"
-};
-        
-        // Admin UIDs (add multiple)
-        const ADMIN_UIDS = ["fR7JvMXCYPSlD9liGub29oo5JC23"]; 
+            apiKey: "AIzaSyBRtu3m76E_iMzt4qxT_ZA6ePwDZr6PVPM",
+            authDomain: "earnify-0.firebaseapp.com",
+            projectId: "earnify-0",
+            storageBucket: "earnify-0.firebasestorage.app",
+            messagingSenderId: "939562179015",
+            appId: "1:939562179015:web:50af680cc0b2a52041e1e2",
+            measurementId: "G-2K89P4XX6F"
+        };
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, limit, getDocs, writeBatch, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        // Admin UIDs
+        const ADMIN_UIDS = ["fR7JvMXCYPSlD9liGub29oo5JC23"];
 
         // State
         let currentUser = null;
         let charts = {};
         let currentFilter = 'pending';
+        let usersUnsubscribe = null;
+        let withdrawalsUnsubscribe = null;
+        let tasksUnsubscribe = null;
 
         // DOM Elements
         const loginView = document.getElementById('admin-login-view');
@@ -562,12 +559,13 @@
         }
 
         // Initialize
-        window.onload = () => {
+        window.addEventListener('load', function() {
             lucide.createIcons();
             setupEventListeners();
-            onAuthStateChanged(auth, handleAuthStateChange);
-        };
+            auth.onAuthStateChanged(handleAuthStateChange);
+        });
 
+        // Auth State Handler
         async function handleAuthStateChange(user) {
             if (user && ADMIN_UIDS.includes(user.uid)) {
                 currentUser = user;
@@ -583,11 +581,17 @@
                 loadAnalytics();
                 initCharts();
             } else {
+                if (user) await auth.signOut();
                 loginView.style.display = 'flex';
                 appContainer.classList.add('hidden');
+                // Clean up listeners
+                if (usersUnsubscribe) usersUnsubscribe();
+                if (withdrawalsUnsubscribe) withdrawalsUnsubscribe();
+                if (tasksUnsubscribe) tasksUnsubscribe();
             }
         }
 
+        // Navigation
         function closeSidebar() { sidebar.classList.remove('show'); }
 
         function navigateTo(pageId, pageTitle) {
@@ -605,9 +609,10 @@
             lucide.createIcons();
         }
 
+        // Event Listeners
         function setupEventListeners() {
             document.getElementById('admin-login-btn').addEventListener('click', handleAdminLogin);
-            document.getElementById('admin-logout-btn').addEventListener('click', () => signOut(auth));
+            document.getElementById('admin-logout-btn').addEventListener('click', () => auth.signOut());
             document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
             document.getElementById('reset-settings-btn').addEventListener('click', resetSettings);
             document.getElementById('send-notification-btn').addEventListener('click', sendNotification);
@@ -634,16 +639,20 @@
             sidebarOverlay.addEventListener('click', closeSidebar);
         }
 
+        // Admin Login
         async function handleAdminLogin() {
             const email = document.getElementById('admin-email').value;
             const password = document.getElementById('admin-password').value;
             
-            if (!email || !password) return showAlert("Please enter credentials.");
+            if (!email || !password) {
+                showAlert("Please enter credentials.");
+                return;
+            }
             
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 if (!ADMIN_UIDS.includes(userCredential.user.uid)) {
-                    await signOut(auth);
+                    await auth.signOut();
                     showAlert("Access denied: You are not authorized.");
                 }
             } catch (error) {
@@ -651,32 +660,35 @@
             }
         }
 
-        // Dashboard with real-time updates
+        // Dashboard with Real Data
         function loadDashboardData() {
-            // Total users
-            onSnapshot(collection(db, "users"), (snap) => {
+            // Total users with real-time updates
+            db.collection("users").onSnapshot((snap) => {
                 document.getElementById('total-users').textContent = snap.size;
                 
                 // New users today
                 const today = new Date();
                 today.setHours(0,0,0,0);
-                const newUsers = Array.from(snap.docs).filter(doc => {
-                    const createdAt = doc.data().createdAt?.toDate();
-                    return createdAt && createdAt >= today;
-                }).length;
+                let newUsers = 0;
+                snap.forEach(doc => {
+                    const user = doc.data();
+                    if (user.createdAt) {
+                        const createdAt = user.createdAt.toDate ? user.createdAt.toDate() : new Date(user.createdAt);
+                        if (createdAt >= today) newUsers++;
+                    }
+                });
                 document.getElementById('new-users-today').textContent = newUsers;
             });
             
             // Total balance
-            onSnapshot(collection(db, "users"), (snap) => {
+            db.collection("users").onSnapshot((snap) => {
                 let total = 0;
                 snap.forEach(doc => total += doc.data().balance || 0);
                 document.getElementById('total-balance').textContent = total.toLocaleString();
             });
             
             // Pending withdrawals
-            const pendingQuery = query(collection(db, "withdrawals"), where("status", "==", "pending"));
-            onSnapshot(pendingQuery, (snap) => {
+            db.collection("withdrawals").where("status", "==", "pending").onSnapshot((snap) => {
                 document.getElementById('pending-withdrawals').textContent = snap.size;
                 let total = 0;
                 snap.forEach(doc => total += doc.data().amount || 0);
@@ -686,10 +698,15 @@
             // Today's earnings
             const today = new Date();
             today.setHours(0,0,0,0);
-            const earningsQuery = query(collection(db, "withdrawals"), where("requestedAt", ">=", today));
-            onSnapshot(earningsQuery, (snap) => {
+            db.collection("withdrawals").where("status", "==", "approved").onSnapshot((snap) => {
                 let total = 0;
-                snap.forEach(doc => total += doc.data().amount || 0);
+                snap.forEach(doc => {
+                    const req = doc.data();
+                    if (req.requestedAt) {
+                        const date = req.requestedAt.toDate ? req.requestedAt.toDate() : new Date(req.requestedAt);
+                        if (date >= today) total += req.amount || 0;
+                    }
+                });
                 document.getElementById('today-earnings').textContent = total.toLocaleString();
             });
             
@@ -701,24 +718,28 @@
             const activities = [];
             
             // Recent users
-            const usersQuery = query(collection(db, "users"), orderBy("createdAt", "desc"), limit(5));
-            const usersSnap = await getDocs(usersQuery);
+            const usersSnap = await db.collection("users").orderBy("createdAt", "desc").limit(5).get();
             usersSnap.forEach(doc => {
+                const user = doc.data();
                 activities.push({
                     type: 'user',
-                    text: `New user registered: ${doc.data().email}`,
-                    time: doc.data().createdAt?.toDate()
+                    text: `New user registered: ${user.email || user.name || 'Unknown'}`,
+                    time: user.createdAt?.toDate ? user.createdAt.toDate() : new Date(),
+                    icon: 'user-plus',
+                    color: 'green'
                 });
             });
             
             // Recent withdrawals
-            const withdrawQuery = query(collection(db, "withdrawals"), orderBy("requestedAt", "desc"), limit(5));
-            const withdrawSnap = await getDocs(withdrawQuery);
+            const withdrawSnap = await db.collection("withdrawals").orderBy("requestedAt", "desc").limit(5).get();
             withdrawSnap.forEach(doc => {
+                const req = doc.data();
                 activities.push({
                     type: 'withdrawal',
-                    text: `Withdrawal request: ${doc.data().amount} coins`,
-                    time: doc.data().requestedAt?.toDate()
+                    text: `Withdrawal request: ${req.amount} coins by ${req.userName || req.userEmail || 'Unknown'}`,
+                    time: req.requestedAt?.toDate ? req.requestedAt.toDate() : new Date(),
+                    icon: 'dollar-sign',
+                    color: 'yellow'
                 });
             });
             
@@ -726,39 +747,49 @@
             activities.sort((a, b) => b.time - a.time);
             
             const container = document.getElementById('recent-activity');
-            container.innerHTML = activities.slice(0, 5).map(a => `
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                    <div class="bg-${a.type === 'user' ? 'green' : 'yellow'}-100 p-2 rounded-full">
-                        <i data-lucide="${a.type === 'user' ? 'user-plus' : 'dollar-sign'}" class="w-4 h-4 text-${a.type === 'user' ? 'green' : 'yellow'}-600"></i>
+            container.innerHTML = activities.slice(0, 5).map(a => {
+                const timeStr = a.time ? new Date(a.time).toLocaleTimeString() : '';
+                return `
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                        <div class="bg-${a.color}-100 p-2 rounded-full">
+                            <i data-lucide="${a.icon}" class="w-4 h-4 text-${a.color}-600"></i>
+                        </div>
+                        <p class="flex-1">${a.text}</p>
+                        <p class="text-sm text-gray-400">${timeStr}</p>
                     </div>
-                    <p class="flex-1">${a.text}</p>
-                    <p class="text-sm text-gray-400">${a.time ? new Date(a.time).toLocaleTimeString() : ''}</p>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             lucide.createIcons();
         }
 
-        // Users Management
+        // Users Management with Real Data
         function loadUsers() {
+            if (usersUnsubscribe) usersUnsubscribe();
+            
             const usersTableBody = document.getElementById('users-table-body');
-            onSnapshot(collection(db, "users"), (snapshot) => {
+            usersUnsubscribe = db.collection("users").onSnapshot((snapshot) => {
                 usersTableBody.innerHTML = '';
+                if (snapshot.empty) {
+                    usersTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500 py-8">No users found.</td></tr>';
+                    return;
+                }
+                
                 snapshot.forEach(doc => {
                     const user = doc.data();
                     const isBlocked = user.isBlocked || false;
-                    const joinDate = user.createdAt?.toDate().toLocaleDateString() || 'N/A';
+                    const joinDate = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString() : 'N/A';
                     
                     usersTableBody.innerHTML += `<tr class="hover:bg-gray-50">
                         <td class="font-medium">${user.name || 'N/A'}</td>
-                        <td>${user.email}</td>
+                        <td>${user.email || 'N/A'}</td>
                         <td><span class="font-bold text-indigo-600">${user.balance || 0}</span></td>
                         <td>${user.totalReferrals || 0}</td>
                         <td>${joinDate}</td>
                         <td><span class="badge ${isBlocked ? 'badge-danger' : 'badge-success'}">${isBlocked ? 'Blocked' : 'Active'}</span></td>
                         <td>
                             <div class="flex gap-2">
-                                <button class="btn btn-${isBlocked ? 'success' : 'danger'} text-xs" onclick="window.toggleBlockUser('${doc.id}', ${isBlocked})">${isBlocked ? 'Unblock' : 'Block'}</button>
-                                <button class="btn btn-warning text-xs" onclick="window.adjustBalance('${doc.id}')">Adjust</button>
+                                <button class="btn btn-${isBlocked ? 'success' : 'danger'} text-xs" onclick="toggleBlockUser('${doc.id}', ${isBlocked})">${isBlocked ? 'Unblock' : 'Block'}</button>
+                                <button class="btn btn-warning text-xs" onclick="adjustBalance('${doc.id}')">Adjust</button>
                             </div>
                         </td>
                     </tr>`;
@@ -766,11 +797,12 @@
             });
         }
 
+        // Global functions for buttons
         window.toggleBlockUser = async (userId, isBlocked) => {
             const confirmed = await showConfirm(`Are you sure you want to ${isBlocked ? 'unblock' : 'block'} this user?`);
             if (confirmed) {
                 try {
-                    await updateDoc(doc(db, "users", userId), { isBlocked: !isBlocked });
+                    await db.collection("users").doc(userId).update({ isBlocked: !isBlocked });
                     showAlert(`User has been ${!isBlocked ? 'blocked' : 'unblocked'}.`);
                 } catch (error) {
                     showAlert(`Error: ${error.message}`);
@@ -783,75 +815,87 @@
             if (amount === null) return;
             
             const numAmount = parseInt(amount);
-            if (isNaN(numAmount)) return showAlert("Invalid amount.");
+            if (isNaN(numAmount)) {
+                showAlert("Invalid amount.");
+                return;
+            }
             
             try {
-                const userRef = doc(db, "users", userId);
-                await updateDoc(userRef, { balance: increment(numAmount) });
+                await db.collection("users").doc(userId).update({ 
+                    balance: firebase.firestore.FieldValue.increment(numAmount) 
+                });
                 showAlert(`Balance adjusted by ${numAmount}.`);
             } catch (error) {
                 showAlert(`Error: ${error.message}`);
             }
         };
 
-        // Withdrawals Management
+        // Withdrawals Management with Real Data
         function loadWithdrawals() {
-            const withdrawalsTableBody = document.getElementById('withdrawals-table-body');
-            const q = query(collection(db, "withdrawals"), where("status", "==", currentFilter), orderBy("requestedAt", "desc"));
+            if (withdrawalsUnsubscribe) withdrawalsUnsubscribe();
             
-            onSnapshot(q, (snapshot) => {
-                if (snapshot.empty) {
-                    withdrawalsTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500 py-8">No requests found.</td></tr>';
-                    return;
-                }
-                
-                withdrawalsTableBody.innerHTML = '';
-                snapshot.forEach(docSnap => {
-                    const req = docSnap.data();
-                    const date = req.requestedAt?.toDate().toLocaleString() || 'N/A';
-                    const statusColors = {
-                        pending: 'badge-warning',
-                        approved: 'badge-success',
-                        rejected: 'badge-danger'
-                    };
+            const withdrawalsTableBody = document.getElementById('withdrawals-table-body');
+            withdrawalsUnsubscribe = db.collection("withdrawals")
+                .where("status", "==", currentFilter)
+                .orderBy("requestedAt", "desc")
+                .onSnapshot((snapshot) => {
+                    if (snapshot.empty) {
+                        withdrawalsTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500 py-8">No requests found.</td></tr>';
+                        return;
+                    }
                     
-                    withdrawalsTableBody.innerHTML += `<tr class="hover:bg-gray-50">
-                        <td class="font-medium">${req.userName || req.userEmail || 'N/A'}</td>
-                        <td><span class="font-bold">${req.amount}</span></td>
-                        <td>${req.method}</td>
-                        <td class="max-w-xs truncate">${req.paymentDetail || 'N/A'}</td>
-                        <td>${date}</td>
-                        <td><span class="badge ${statusColors[req.status]}">${req.status}</span></td>
-                        <td>
-                            ${req.status === 'pending' ? `
-                                <div class="flex gap-2">
-                                    <button class="btn btn-success text-xs" onclick="window.handleWithdrawal('${docSnap.id}', 'approved')">Approve</button>
-                                    <button class="btn btn-danger text-xs" onclick="window.handleWithdrawal('${docSnap.id}', 'rejected')">Reject</button>
-                                </div>
-                            ` : '-'}
-                        </td>
-                    </tr>`;
+                    withdrawalsTableBody.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const req = doc.data();
+                        const date = req.requestedAt?.toDate ? req.requestedAt.toDate().toLocaleString() : 'N/A';
+                        const statusColors = {
+                            pending: 'badge-warning',
+                            approved: 'badge-success',
+                            rejected: 'badge-danger'
+                        };
+                        
+                        withdrawalsTableBody.innerHTML += `<tr class="hover:bg-gray-50">
+                            <td class="font-medium">${req.userName || req.userEmail || 'N/A'}</td>
+                            <td><span class="font-bold">${req.amount}</span></td>
+                            <td>${req.method || 'N/A'}</td>
+                            <td class="max-w-xs truncate">${req.paymentDetail || 'N/A'}</td>
+                            <td>${date}</td>
+                            <td><span class="badge ${statusColors[req.status]}">${req.status}</span></td>
+                            <td>
+                                ${req.status === 'pending' ? `
+                                    <div class="flex gap-2">
+                                        <button class="btn btn-success text-xs" onclick="handleWithdrawal('${doc.id}', 'approved')">Approve</button>
+                                        <button class="btn btn-danger text-xs" onclick="handleWithdrawal('${doc.id}', 'rejected')">Reject</button>
+                                    </div>
+                                ` : '-'}
+                            </td>
+                        </tr>`;
+                    });
                 });
-            });
         }
 
         window.handleWithdrawal = async (requestId, newStatus) => {
             const confirmed = await showConfirm(`Are you sure you want to ${newStatus} this request?`);
             if (!confirmed) return;
             
-            const requestRef = doc(db, "withdrawals", requestId);
-            const batch = writeBatch(db);
+            const requestRef = db.collection("withdrawals").doc(requestId);
+            const batch = db.batch();
             
             try {
-                const requestSnap = await getDoc(requestRef);
-                if (!requestSnap.exists()) return showAlert("Request not found.");
+                const requestSnap = await requestRef.get();
+                if (!requestSnap.exists) {
+                    showAlert("Request not found.");
+                    return;
+                }
                 
                 const requestData = requestSnap.data();
                 
                 if (newStatus === 'rejected') {
                     // Refund coins
-                    const userRef = doc(db, "users", requestData.userId);
-                    batch.update(userRef, { balance: increment(requestData.amount) });
+                    const userRef = db.collection("users").doc(requestData.userId);
+                    batch.update(userRef, { 
+                        balance: firebase.firestore.FieldValue.increment(requestData.amount) 
+                    });
                 }
                 
                 batch.update(requestRef, { status: newStatus });
@@ -863,53 +907,65 @@
             }
         };
 
-        // Transactions
+        // Transactions with Real Data
         async function loadTransactions() {
             const transactionsBody = document.getElementById('transactions-table-body');
             
-            // Combine withdrawals and referrals for demo
-            const withdrawalsQuery = query(collection(db, "withdrawals"), orderBy("requestedAt", "desc"), limit(50));
-            const withdrawalsSnap = await getDocs(withdrawalsQuery);
+            // Get all withdrawals for transactions
+            const withdrawalsSnap = await db.collection("withdrawals")
+                .orderBy("requestedAt", "desc")
+                .limit(50)
+                .get();
             
             transactionsBody.innerHTML = '';
+            if (withdrawalsSnap.empty) {
+                transactionsBody.innerHTML = '<tr><td colspan="5" class="text-center text-gray-500 py-8">No transactions found.</td></tr>';
+                return;
+            }
+            
             withdrawalsSnap.forEach(doc => {
                 const t = doc.data();
+                const date = t.requestedAt?.toDate ? t.requestedAt.toDate().toLocaleString() : 'N/A';
                 transactionsBody.innerHTML += `<tr>
-                    <td>${t.userName || t.userEmail}</td>
+                    <td>${t.userName || t.userEmail || 'N/A'}</td>
                     <td>Withdrawal</td>
-                    <td class="text-red-600">-${t.amount}</td>
-                    <td>${t.requestedAt?.toDate().toLocaleString()}</td>
+                    <td class="${t.status === 'approved' ? 'text-red-600' : 'text-gray-600'}">-${t.amount}</td>
+                    <td>${date}</td>
                     <td><span class="badge badge-${t.status === 'approved' ? 'success' : t.status === 'rejected' ? 'danger' : 'warning'}">${t.status}</span></td>
                 </tr>`;
             });
         }
 
-        // Task Manager
-        async function loadTasks() {
-            const tasksList = document.getElementById('tasks-list');
-            const tasksQuery = query(collection(db, "tasks"), orderBy("createdAt", "desc"));
+        // Task Manager with Real Data
+        function loadTasks() {
+            if (tasksUnsubscribe) tasksUnsubscribe();
             
-            onSnapshot(tasksQuery, (snap) => {
-                if (snap.empty) {
-                    tasksList.innerHTML = '<p class="text-gray-400 text-center py-4">No tasks available.</p>';
-                    return;
-                }
-                
-                tasksList.innerHTML = '';
-                snap.forEach(doc => {
-                    const task = doc.data();
-                    tasksList.innerHTML += `
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                            <div>
-                                <h4 class="font-semibold">${task.title}</h4>
-                                <p class="text-sm text-gray-500">${task.description}</p>
-                                <p class="text-sm text-indigo-600 font-bold mt-1">Reward: ${task.reward} coins</p>
+            const tasksList = document.getElementById('tasks-list');
+            tasksUnsubscribe = db.collection("tasks")
+                .where("active", "==", true)
+                .orderBy("createdAt", "desc")
+                .onSnapshot((snap) => {
+                    if (snap.empty) {
+                        tasksList.innerHTML = '<p class="text-gray-400 text-center py-4">No tasks available.</p>';
+                        return;
+                    }
+                    
+                    tasksList.innerHTML = '';
+                    snap.forEach(doc => {
+                        const task = doc.data();
+                        tasksList.innerHTML += `
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                <div>
+                                    <h4 class="font-semibold">${task.title || 'Untitled'}</h4>
+                                    <p class="text-sm text-gray-500">${task.description || ''}</p>
+                                    <p class="text-sm text-indigo-600 font-bold mt-1">Reward: ${task.reward || 0} coins</p>
+                                    <p class="text-xs text-gray-400">Type: ${task.type || 'interstitial'}</p>
+                                </div>
+                                <button class="btn btn-danger text-xs" onclick="deleteTask('${doc.id}')">Delete</button>
                             </div>
-                            <button class="btn btn-danger text-xs" onclick="window.deleteTask('${doc.id}')">Delete</button>
-                        </div>
-                    `;
+                        `;
+                    });
                 });
-            });
         }
 
         async function addTask() {
@@ -918,15 +974,18 @@
             const reward = parseInt(document.getElementById('task-reward').value);
             const type = document.getElementById('task-type').value;
             
-            if (!title || !description || !reward) return showAlert("Please fill all fields.");
+            if (!title || !description || !reward) {
+                showAlert("Please fill all fields.");
+                return;
+            }
             
             try {
-                await addDoc(collection(db, "tasks"), {
+                await db.collection("tasks").add({
                     title,
                     description,
                     reward,
                     type,
-                    createdAt: serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     active: true
                 });
                 
@@ -943,7 +1002,7 @@
             const confirmed = await showConfirm("Delete this task?");
             if (confirmed) {
                 try {
-                    await updateDoc(doc(db, "tasks", taskId), { active: false });
+                    await db.collection("tasks").doc(taskId).update({ active: false });
                     showAlert("Task deleted.");
                 } catch (error) {
                     showAlert(`Error: ${error.message}`);
@@ -951,20 +1010,23 @@
             }
         };
 
-        // Notifications
+        // Notifications with Real Data
         async function sendNotification() {
             const title = document.getElementById('notification-title').value;
             const message = document.getElementById('notification-message').value;
             const icon = document.getElementById('notification-icon').value;
             
-            if (!title || !message) return showAlert("Title and message are required.");
+            if (!title || !message) {
+                showAlert("Title and message are required.");
+                return;
+            }
             
             try {
-                await addDoc(collection(db, "notifications"), {
+                await db.collection("notifications").add({
                     title,
                     message,
                     icon,
-                    createdAt: serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 showAlert("Notification sent to all users!");
@@ -975,18 +1037,19 @@
             }
         }
 
-        // Settings
+        // Settings with Real Data
         async function loadSettings() {
-            const configRef = doc(db, "config", "main");
             try {
-                const docSnap = await getDoc(configRef);
-                if (docSnap.exists()) {
+                const configRef = db.collection("config").doc("main");
+                const docSnap = await configRef.get();
+                
+                if (docSnap.exists) {
                     const config = docSnap.data();
                     document.getElementById('min-withdrawal').value = config.minWithdrawal || 5000;
-                    document.getElementById('daily-ad-limit').value = config.dailyAdLimit || 10;
+                    document.getElementById('daily-ad-limit').value = config.dailyAdLimit || 15;
                     document.getElementById('coin-value-coins').value = config.coinValueCoins || 1000;
-                    document.getElementById('coin-value-taka').value = config.coinValueTaka || 10;
-                    document.getElementById('payment-methods').value = (config.paymentMethods || ['bKash', 'Nagad']).join(',');
+                    document.getElementById('coin-value-inr').value = config.coinValueInr || 10;
+                    document.getElementById('payment-methods').value = (config.paymentMethods || ['UPI', 'bKash', 'PayPal']).join(',');
                     document.getElementById('welcome-bonus').value = config.welcomeBonus || 50;
                     document.getElementById('referral-bonus').value = config.referralBonus || 100;
                 }
@@ -998,16 +1061,17 @@
         async function saveSettings() {
             const settingsData = {
                 minWithdrawal: parseInt(document.getElementById('min-withdrawal').value) || 5000,
-                dailyAdLimit: parseInt(document.getElementById('daily-ad-limit').value) || 10,
+                dailyAdLimit: parseInt(document.getElementById('daily-ad-limit').value) || 15,
                 coinValueCoins: parseInt(document.getElementById('coin-value-coins').value) || 1000,
-                coinValueTaka: parseFloat(document.getElementById('coin-value-taka').value) || 10,
+                coinValueInr: parseInt(document.getElementById('coin-value-inr').value) || 10,
                 paymentMethods: document.getElementById('payment-methods').value.split(',').map(s => s.trim()).filter(Boolean),
                 welcomeBonus: parseInt(document.getElementById('welcome-bonus').value) || 50,
-                referralBonus: parseInt(document.getElementById('referral-bonus').value) || 100
+                referralBonus: parseInt(document.getElementById('referral-bonus').value) || 100,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
             try {
-                await setDoc(doc(db, "config", "main"), settingsData, { merge: true });
+                await db.collection("config").doc("main").set(settingsData, { merge: true });
                 showAlert("Settings saved successfully!");
             } catch (error) {
                 showAlert(`Error: ${error.message}`);
@@ -1018,49 +1082,51 @@
             const confirmed = await showConfirm("Reset all settings to default?");
             if (confirmed) {
                 document.getElementById('min-withdrawal').value = 5000;
-                document.getElementById('daily-ad-limit').value = 10;
+                document.getElementById('daily-ad-limit').value = 15;
                 document.getElementById('coin-value-coins').value = 1000;
-                document.getElementById('coin-value-taka').value = 10;
-                document.getElementById('payment-methods').value = 'bKash,Nagad,Rocket,UPI';
+                document.getElementById('coin-value-inr').value = 10;
+                document.getElementById('payment-methods').value = 'UPI,bKash,PayPal';
                 document.getElementById('welcome-bonus').value = 50;
                 document.getElementById('referral-bonus').value = 100;
                 showAlert("Settings reset. Click Save to apply.");
             }
         }
 
-        // Export Users
+        // Export Users to CSV
         async function exportUsers() {
-            const usersSnap = await getDocs(collection(db, "users"));
+            const usersSnap = await db.collection("users").get();
             let csv = "Name,Email,Balance,Referrals,Joined,Status\n";
             
             usersSnap.forEach(doc => {
                 const user = doc.data();
-                csv += `"${user.name || ''}","${user.email}",${user.balance || 0},${user.totalReferrals || 0},"${user.createdAt?.toDate().toLocaleDateString() || ''}","${user.isBlocked ? 'Blocked' : 'Active'}"\n`;
+                const joinDate = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString() : '';
+                csv += `"${user.name || ''}","${user.email || ''}",${user.balance || 0},${user.totalReferrals || 0},"${joinDate}","${user.isBlocked ? 'Blocked' : 'Active'}"\n`;
             });
             
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `users_export_${new Date().toISOString()}.csv`;
+            a.download = `users_export_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
+            window.URL.revokeObjectURL(url);
         }
 
-        // Analytics
+        // Analytics with Real Data
         async function loadAnalytics() {
-            // Daily active users
+            // Daily active users (last 7 days)
+            const usersSnap = await db.collection("users").get();
             const today = new Date();
             today.setHours(0,0,0,0);
             
-            const usersSnap = await getDocs(collection(db, "users"));
             let activeToday = 0;
             usersSnap.forEach(doc => {
                 const lastActive = doc.data().lastActiveDate;
                 if (lastActive === today.toISOString().split('T')[0]) activeToday++;
             });
             
-            // Average withdrawal
-            const withdrawalsSnap = await getDocs(collection(db, "withdrawals"));
+            // Average withdrawal amount
+            const withdrawalsSnap = await db.collection("withdrawals").where("status", "==", "approved").get();
             let totalAmount = 0, count = 0;
             withdrawalsSnap.forEach(doc => {
                 totalAmount += doc.data().amount || 0;
@@ -1071,26 +1137,40 @@
             // Conversion rate (users who made withdrawal)
             const usersWithWithdrawals = new Set();
             withdrawalsSnap.forEach(doc => usersWithWithdrawals.add(doc.data().userId));
-            const conversionRate = usersSnap.size ? (usersWithWithdrawals.size / usersSnap.size * 100).toFixed(1) : 0;
+            const conversionRate = usersSnap.size ? ((usersWithWithdrawals.size / usersSnap.size) * 100).toFixed(1) : 0;
             document.getElementById('conversion-rate').textContent = conversionRate + '%';
             
-            // Retention (simplified)
-            const retention = usersSnap.size ? ((usersSnap.size - activeToday) / usersSnap.size * 100).toFixed(1) : 0;
+            // Retention rate (users active in last 7 days / total users)
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            let activeLast7Days = 0;
+            usersSnap.forEach(doc => {
+                const user = doc.data();
+                if (user.lastActiveDate) {
+                    const lastActive = new Date(user.lastActiveDate);
+                    if (lastActive >= sevenDaysAgo) activeLast7Days++;
+                }
+            });
+            const retention = usersSnap.size ? ((activeLast7Days / usersSnap.size) * 100).toFixed(1) : 0;
             document.getElementById('retention-rate').textContent = retention + '%';
         }
 
-        // Charts
-        function initCharts() {
-            // User growth chart
+        // Charts with Real Data
+        async function initCharts() {
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => chart?.destroy());
+            
+            // User growth chart (last 7 days)
             const ctx1 = document.getElementById('userChart')?.getContext('2d');
             if (ctx1) {
+                const userData = await getUserGrowthData();
                 charts.user = new Chart(ctx1, {
                     type: 'line',
                     data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        labels: userData.labels,
                         datasets: [{
                             label: 'New Users',
-                            data: [12, 19, 15, 17, 14, 23, 20],
+                            data: userData.data,
                             borderColor: '#4f46e5',
                             backgroundColor: 'rgba(79, 70, 229, 0.1)',
                             tension: 0.4,
@@ -1104,50 +1184,160 @@
                 });
             }
             
+            // Withdrawal chart
             const ctx2 = document.getElementById('withdrawalChart')?.getContext('2d');
             if (ctx2) {
+                const withdrawalData = await getWithdrawalData();
                 charts.withdrawal = new Chart(ctx2, {
                     type: 'bar',
                     data: {
                         labels: ['Pending', 'Approved', 'Rejected'],
                         datasets: [{
                             label: 'Withdrawals',
-                            data: [5, 20, 3],
+                            data: [withdrawalData.pending, withdrawalData.approved, withdrawalData.rejected],
                             backgroundColor: ['#f59e0b', '#10b981', '#ef4444']
                         }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
                     }
                 });
             }
             
+            // Daily active chart
             const ctx3 = document.getElementById('dailyActiveChart')?.getContext('2d');
             if (ctx3) {
+                const activeData = await getDailyActiveData();
                 charts.active = new Chart(ctx3, {
                     type: 'line',
                     data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        labels: activeData.labels,
                         datasets: [{
                             label: 'Active Users',
-                            data: [65, 75, 80, 78, 82, 90, 95],
-                            borderColor: '#10b981'
+                            data: activeData.data,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
                         }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
                     }
                 });
             }
             
+            // Revenue chart
             const ctx4 = document.getElementById('revenueChart')?.getContext('2d');
             if (ctx4) {
+                const revenueData = await getRevenueData();
                 charts.revenue = new Chart(ctx4, {
                     type: 'doughnut',
                     data: {
                         labels: ['Ad Revenue', 'Referrals', 'Other'],
                         datasets: [{
-                            data: [70, 20, 10],
+                            data: [revenueData.ads, revenueData.referrals, revenueData.other],
                             backgroundColor: ['#4f46e5', '#10b981', '#f59e0b']
                         }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
                     }
                 });
             }
         }
+
+        // Helper functions for chart data
+        async function getUserGrowthData() {
+            const labels = [];
+            const data = [];
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                const nextDate = new Date(date);
+                nextDate.setDate(nextDate.getDate() + 1);
+                
+                const usersSnap = await db.collection("users")
+                    .where("createdAt", ">=", date)
+                    .where("createdAt", "<", nextDate)
+                    .get();
+                
+                data.push(usersSnap.size);
+            }
+            
+            return { labels, data };
+        }
+
+        async function getWithdrawalData() {
+            const pending = await db.collection("withdrawals").where("status", "==", "pending").get();
+            const approved = await db.collection("withdrawals").where("status", "==", "approved").get();
+            const rejected = await db.collection("withdrawals").where("status", "==", "rejected").get();
+            
+            return {
+                pending: pending.size,
+                approved: approved.size,
+                rejected: rejected.size
+            };
+        }
+
+        async function getDailyActiveData() {
+            const labels = [];
+            const data = [];
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                const dateStr = date.toISOString().split('T')[0];
+                const usersSnap = await db.collection("users")
+                    .where("lastActiveDate", "==", dateStr)
+                    .get();
+                
+                data.push(usersSnap.size);
+            }
+            
+            return { labels, data };
+        }
+
+        async function getRevenueData() {
+            // Simplified revenue calculation
+            // In production, you'd have a separate earnings collection
+            const withdrawalsSnap = await db.collection("withdrawals").where("status", "==", "approved").get();
+            let totalWithdrawn = 0;
+            withdrawalsSnap.forEach(doc => totalWithdrawn += doc.data().amount || 0);
+            
+            const usersSnap = await db.collection("users").get();
+            let totalReferrals = 0;
+            usersSnap.forEach(doc => totalReferrals += doc.data().referralEarnings || 0);
+            
+            // Assuming ads revenue is 3x of withdrawals
+            const adsRevenue = totalWithdrawn * 3;
+            const otherRevenue = totalWithdrawn * 0.5;
+            
+            return {
+                ads: adsRevenue,
+                referrals: totalReferrals,
+                other: otherRevenue
+            };
+        }
+
+        // Refresh data periodically
+        setInterval(() => {
+            if (currentUser && ADMIN_UIDS.includes(currentUser.uid)) {
+                loadAnalytics();
+                loadTransactions();
+                initCharts();
+            }
+        }, 60000); // Refresh every minute
     </script>
 </body>
 </html>
