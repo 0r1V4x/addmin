@@ -1,9 +1,23 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "source": "/(.*)",
-      "destination": "/10.html"
+      "src": "*.html",
+      "use": "@vercel/static"
     }
-  ]
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "cleanUrls": true
 }
