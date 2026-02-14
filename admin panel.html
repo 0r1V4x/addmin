@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CashReward Admin Pro • Advanced Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', sans-serif;
+        }
+        body { background-color: #f0f2f5; margin: 0; }
+        
+        /* --- Mobile First Approach with Advanced UI --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 280px;
+            z-index: 50;
+            background: linear-gradient(180deg, #1a1f2e 0%, #0f1322 100%);
+            color: #a0a8c0;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+        }
+        .sidebar.show { transform: translateX(0); }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 45;
+        }
+        .sidebar.show + .sidebar-overlay { display: block; }
+        
+        .sidebar a { 
+            border-left: 4px solid transparent; 
+            transition: all 0.2s;
+            margin: 4px 8px;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+        .sidebar a:hover { 
+            background-color: rgba(79, 70, 229, 0.15); 
+            color: white;
+        }
+        .sidebar a.active { 
+            background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+            color: white; 
+            border-left-color: #a5b4fc;
+            box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.4);
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                position: sticky;
+                top: 0;
+                transform: translateX(0);
+                height: 100vh;
+            }
+            .sidebar-overlay, .mobile-header { display: none; }
+            .main-content-container { display: flex; }
+        }
+
+        /* Modern Card Styles */
+        .stat-card { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -10px rgba(79, 70, 229, 0.2); }
+        
+        .page { display: none; animation: fadeScale 0.3s ease; }
+        .page.active { display: block; }
+        
+        .btn { 
+            padding: 0.6rem 1.2rem; 
+            border-radius: 14px; 
+            font-weight: 600; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.3); }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        
+        table { 
+            width: 100%; 
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        th { 
+            background: #f8fafc;
+            padding: 16px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        td { 
+            padding: 16px;
+            background: white;
+            border-bottom: none;
+        }
+        tr { border-radius: 16px; }
+        
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fed7aa; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        
+        .metric-tile {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 24px;
+        }
+        
+        .skeleton {
+            background: linear-gradient(90deg, #e2e8f0 25%, #edf2f7 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        .input-field {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 12px 16px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .input-field:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container" class="hidden">
+        <!-- Mobile Header -->
+        <header class="mobile-header md:hidden sticky top-0 z-40 flex items-center justify-between p-4 bg-white shadow-lg backdrop-blur-lg bg-opacity-90">
+            <h1 id="page-title" class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Dashboard</h1>
+            <button id="menu-toggle-btn" class="p-2 hover:bg-gray-100 rounded-xl">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </header>
+
+        <div class="main-content-container">
+            <!-- Enhanced Sidebar -->
+            <aside class="sidebar">
+                <div class="p-6">
+                    <h1 class="text-2xl font-bold text-white">CashReward</h1>
+                    <p class="text-indigo-300 text-sm mt-1">Admin Pro Panel</p>
+                </div>
+                <nav class="mt-4 px-3">
+                    <a href="#" class="nav-link flex items-center" data-page="dashboard-page" data-title="Dashboard">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>Dashboard
+                    </a>
+                    <a href="#" class="nav-link flex items-center" data-page="users-page" data-title="User Management">
+                        <i data-lucide="users" class="w-5 h-5 mr-3"></i>Users
+                    </a>
+                    <a href="#" class="nav-link flex items-center" data-page="withdrawals-page" data-title="Withdrawals">
+                        <i data-lucide="wallet" class="w-5 h-5 mr-3"></i>Withdrawals
+                    </a>
+                    <a href="#" class="nav-link flex items-center" data-page="transactions-page" data-title="Transactions">
+                        <i data-lucide="repeat" class="w-5 h-5 mr-3"></i>Transactions
+                    </a>
+                    <a href="#" class="nav-link flex items-center" data-page="notifications-page" data-title="Notifications">
+                        <i data-lucide="bell" class="w-5 h-5 mr-3"></i>Notifications
+                    </a>
+                    <a href="#" class="nav-link flex items-center" data-page="analytics-page" data-title="Analytics">
+                        <i data-lucide="trending-up" class="w-5 h-5 mr-3"></i>Analytics
+                    </a>
+                    <a href="#" class="nav-link flex items-center" data-page="tasks-page" data-title="Task Manager">
+                        <i data-lucide="check-square" class="w-5 h-5 mr-3"></i>Task Manager
+                    </a>
+                    <a href="#" class="nav-link flex items-center" data-page="settings-page" data-title="Settings">
+                        <i data-lucide="settings" class="w-5 h-5 mr-3"></i>Settings
+                    </a>
+                    <a href="#" id="admin-logout-btn" class="flex items-center mt-8 text-red-400 hover:bg-red-500/10">
+                        <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>Logout
+                    </a>
+                </nav>
+            </aside>
+            <div class="sidebar-overlay"></div>
+
+            <!-- Main Content Area -->
+            <main class="main-content flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+                <h1 id="desktop-page-title" class="text-3xl font-bold mb-8 hidden md:block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Dashboard</h1>
+                
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Total Users</p>
+                                    <p id="total-users" class="text-4xl font-bold mt-2">0</p>
+                                </div>
+                                <div class="bg-indigo-100 p-4 rounded-2xl"><i data-lucide="users" class="w-8 h-8 text-indigo-600"></i></div>
+                            </div>
+                            <p class="text-green-500 text-sm mt-2"><span id="new-users-today">0</span> new today</p>
+                        </div>
+                        <div class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Total Balance</p>
+                                    <p id="total-balance" class="text-4xl font-bold mt-2">0</p>
+                                </div>
+                                <div class="bg-green-100 p-4 rounded-2xl"><i data-lucide="wallet" class="w-8 h-8 text-green-600"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Pending Withdrawals</p>
+                                    <p id="pending-withdrawals" class="text-4xl font-bold mt-2">0</p>
+                                </div>
+                                <div class="bg-yellow-100 p-4 rounded-2xl"><i data-lucide="clock" class="w-8 h-8 text-yellow-600"></i></div>
+                            </div>
+                            <p class="text-yellow-500 text-sm mt-2">Amount: <span id="pending-amount">0</span> coins</p>
+                        </div>
+                        <div class="stat-card p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Today's Earnings</p>
+                                    <p id="today-earnings" class="text-4xl font-bold mt-2">0</p>
+                                </div>
+                                <div class="bg-purple-100 p-4 rounded-2xl"><i data-lucide="trending-up" class="w-8 h-8 text-purple-600"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-4">User Growth</h3>
+                            <canvas id="userChart" height="200"></canvas>
+                        </div>
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-4">Withdrawal Trends</h3>
+                            <canvas id="withdrawalChart" height="200"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="stat-card p-6">
+                        <h3 class="font-semibold mb-4">Recent Activity</h3>
+                        <div id="recent-activity" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Users Page (Enhanced) -->
+                <div id="users-page" class="page">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">User Management</h2>
+                        <button id="export-users-btn" class="btn btn-primary flex items-center gap-2">
+                            <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+                        </button>
+                    </div>
+                    <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table>
+                                <thead>
+                                    <tr><th>User</th><th>Email</th><th>Balance</th><th>Referrals</th><th>Joined</th><th>Status</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody id="users-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Withdrawals Page (Enhanced) -->
+                <div id="withdrawals-page" class="page">
+                    <div class="flex gap-2 mb-6">
+                        <button class="filter-btn btn btn-primary" data-status="pending">Pending</button>
+                        <button class="filter-btn btn" data-status="approved">Approved</button>
+                        <button class="filter-btn btn" data-status="rejected">Rejected</button>
+                    </div>
+                    <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table>
+                                <thead><tr><th>User</th><th>Amount</th><th>Method</th><th>Details</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="withdrawals-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Page (New) -->
+                <div id="transactions-page" class="page">
+                    <h2 class="text-2xl font-bold mb-6">All Transactions</h2>
+                    <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table>
+                                <thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+                                <tbody id="transactions-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Page (New) -->
+                <div id="analytics-page" class="page">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-4">Daily Active Users</h3>
+                            <canvas id="dailyActiveChart" height="200"></canvas>
+                        </div>
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-4">Revenue Distribution</h3>
+                            <canvas id="revenueChart" height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="stat-card p-6">
+                            <p class="text-gray-500">Avg. Daily Withdrawal</p>
+                            <p class="text-3xl font-bold" id="avg-withdrawal">0</p>
+                        </div>
+                        <div class="stat-card p-6">
+                            <p class="text-gray-500">Conversion Rate</p>
+                            <p class="text-3xl font-bold" id="conversion-rate">0%</p>
+                        </div>
+                        <div class="stat-card p-6">
+                            <p class="text-gray-500">Retention Rate</p>
+                            <p class="text-3xl font-bold" id="retention-rate">0%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Manager Page (New) -->
+                <div id="tasks-page" class="page">
+                    <h2 class="text-2xl font-bold mb-6">Task Manager</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-4">Add New Task</h3>
+                            <input type="text" id="task-title" placeholder="Task Title" class="input-field mb-3">
+                            <textarea id="task-desc" placeholder="Description" class="input-field mb-3" rows="3"></textarea>
+                            <input type="number" id="task-reward" placeholder="Reward (coins)" class="input-field mb-3">
+                            <select id="task-type" class="input-field mb-3">
+                                <option value="interstitial">Watch Ad</option>
+                                <option value="popup">Popup Ad</option>
+                                <option value="inApp">In-App Video</option>
+                                <option value="miniApp">Mini Game</option>
+                            </select>
+                            <button id="add-task-btn" class="btn btn-primary w-full">Add Task</button>
+                        </div>
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-4">Active Tasks</h3>
+                            <div id="tasks-list" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Page -->
+                <div id="notifications-page" class="page">
+                    <div class="max-w-2xl">
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-4">Send Notification</h3>
+                            <div class="mb-4">
+                                <label class="block font-semibold mb-2">Title</label>
+                                <input type="text" id="notification-title" class="input-field" placeholder="e.g. New Update">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block font-semibold mb-2">Message</label>
+                                <textarea id="notification-message" rows="4" class="input-field" placeholder="Type your message..."></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block font-semibold mb-2">Icon (optional)</label>
+                                <select id="notification-icon" class="input-field">
+                                    <option value="bell">Bell</option>
+                                    <option value="gift">Gift</option>
+                                    <option value="alert-circle">Alert</option>
+                                    <option value="info">Info</option>
+                                </select>
+                            </div>
+                            <button id="send-notification-btn" class="btn btn-primary w-full">Send to All Users</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page (Enhanced) -->
+                <div id="settings-page" class="page">
+                    <div class="max-w-2xl">
+                        <div class="stat-card p-6">
+                            <h3 class="font-semibold mb-6">App Configuration</h3>
+                            
+                            <div class="mb-6">
+                                <label class="block font-semibold mb-2">Minimum Withdrawal (Coins)</label>
+                                <input type="number" id="min-withdrawal" class="input-field">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block font-semibold mb-2">Daily Ad Limit</label>
+                                <input type="number" id="daily-ad-limit" class="input-field">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block font-semibold mb-2">Coin Value</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="coin-value-coins" class="input-field" placeholder="Coins">
+                                    <span class="font-semibold text-gray-600 self-center">= ৳</span>
+                                    <input type="number" id="coin-value-taka" class="input-field" placeholder="Taka">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block font-semibold mb-2">Payment Methods (comma-separated)</label>
+                                <input type="text" id="payment-methods" class="input-field" placeholder="bKash,Nagad,Rocket,UPI">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block font-semibold mb-2">Welcome Bonus (coins)</label>
+                                <input type="number" id="welcome-bonus" class="input-field" value="50">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block font-semibold mb-2">Referral Bonus (coins)</label>
+                                <input type="number" id="referral-bonus" class="input-field" value="100">
+                            </div>
+                            
+                            <div class="flex gap-3">
+                                <button id="save-settings-btn" class="btn btn-primary flex-1">Save Settings</button>
+                                <button id="reset-settings-btn" class="btn btn-warning">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Login View (Enhanced) -->
+    <div id="admin-login-view" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+        <div class="w-full max-w-md p-8 space-y-6 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-white mb-2">Admin Pro</h1>
+                <p class="text-indigo-200">Secure Access Panel</p>
+            </div>
+            <input id="admin-email" type="email" placeholder="Admin Email" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <input id="admin-password" type="password" placeholder="Password" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <button id="admin-login-btn" class="w-full btn bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-bold hover:opacity-90 transition">Login to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="bg-indigo-100 p-3 rounded-full"><i data-lucide="info" class="w-6 h-6 text-indigo-600"></i></div>
+                <h3 class="text-xl font-bold">Alert</h3>
+            </div>
+            <p id="alert-message" class="mb-6 text-gray-600"></p>
+            <button id="alert-ok-btn" class="w-full btn btn-primary">OK</button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+            <h3 class="text-xl font-bold mb-2">Confirm Action</h3>
+            <p id="confirm-message" class="mb-6 text-gray-600"></p>
+            <div class="flex gap-3">
+                <button id="confirm-yes-btn" class="flex-1 btn btn-success">Yes</button>
+                <button id="confirm-no-btn" class="flex-1 btn btn-danger">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const firebaseConfig = {
+  apiKey: "AIzaSyBRtu3m76E_iMzt4qxT_ZA6ePwDZr6PVPM",
+  authDomain: "earnify-0.firebaseapp.com",
+  projectId: "earnify-0",
+  storageBucket: "earnify-0.firebasestorage.app",
+  messagingSenderId: "939562179015",
+  appId: "1:939562179015:web:50af680cc0b2a52041e1e2",
+  measurementId: "G-2K89P4XX6F"
+};
+        
+        // Admin UIDs (add multiple)
+        const ADMIN_UIDS = ["fR7JvMXCYPSlD9liGub29oo5JC23"]; 
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, limit, getDocs, writeBatch, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // State
+        let currentUser = null;
+        let charts = {};
+        let currentFilter = 'pending';
+
+        // DOM Elements
+        const loginView = document.getElementById('admin-login-view');
+        const appContainer = document.getElementById('app-container');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.querySelector('.sidebar-overlay');
+        const menuToggleBtn = document.getElementById('menu-toggle-btn');
+        const alertModal = document.getElementById('alert-modal');
+        const alertMessage = document.getElementById('alert-message');
+        const alertOkBtn = document.getElementById('alert-ok-btn');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmMessage = document.getElementById('confirm-message');
+        const confirmYesBtn = document.getElementById('confirm-yes-btn');
+        const confirmNoBtn = document.getElementById('confirm-no-btn');
+
+        // Alert Functions
+        function showAlert(message) {
+            alertMessage.textContent = message;
+            alertModal.classList.remove('hidden');
+            alertOkBtn.onclick = () => alertModal.classList.add('hidden');
+        }
+        
+        function showConfirm(message) {
+            return new Promise((resolve) => {
+                confirmMessage.textContent = message;
+                confirmModal.classList.remove('hidden');
+                confirmYesBtn.onclick = () => {
+                    confirmModal.classList.add('hidden');
+                    resolve(true);
+                };
+                confirmNoBtn.onclick = () => {
+                    confirmModal.classList.add('hidden');
+                    resolve(false);
+                };
+            });
+        }
+
+        // Initialize
+        window.onload = () => {
+            lucide.createIcons();
+            setupEventListeners();
+            onAuthStateChanged(auth, handleAuthStateChange);
+        };
+
+        async function handleAuthStateChange(user) {
+            if (user && ADMIN_UIDS.includes(user.uid)) {
+                currentUser = user;
+                loginView.style.display = 'none';
+                appContainer.classList.remove('hidden');
+                navigateTo('dashboard-page', 'Dashboard');
+                loadDashboardData();
+                loadUsers();
+                loadWithdrawals();
+                loadTransactions();
+                loadTasks();
+                loadSettings();
+                loadAnalytics();
+                initCharts();
+            } else {
+                loginView.style.display = 'flex';
+                appContainer.classList.add('hidden');
+            }
+        }
+
+        function closeSidebar() { sidebar.classList.remove('show'); }
+
+        function navigateTo(pageId, pageTitle) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === pageId) link.classList.add('active');
+            });
+
+            document.getElementById('page-title').textContent = pageTitle;
+            document.getElementById('desktop-page-title').textContent = pageTitle;
+            closeSidebar();
+            lucide.createIcons();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('admin-login-btn').addEventListener('click', handleAdminLogin);
+            document.getElementById('admin-logout-btn').addEventListener('click', () => signOut(auth));
+            document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
+            document.getElementById('reset-settings-btn').addEventListener('click', resetSettings);
+            document.getElementById('send-notification-btn').addEventListener('click', sendNotification);
+            document.getElementById('add-task-btn').addEventListener('click', addTask);
+            document.getElementById('export-users-btn')?.addEventListener('click', exportUsers);
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    navigateTo(link.dataset.page, link.dataset.title); 
+                });
+            });
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('btn-primary'));
+                    btn.classList.add('btn-primary');
+                    currentFilter = btn.dataset.status;
+                    loadWithdrawals();
+                });
+            });
+            
+            menuToggleBtn.addEventListener('click', () => sidebar.classList.toggle('show'));
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        async function handleAdminLogin() {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (!email || !password) return showAlert("Please enter credentials.");
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                if (!ADMIN_UIDS.includes(userCredential.user.uid)) {
+                    await signOut(auth);
+                    showAlert("Access denied: You are not authorized.");
+                }
+            } catch (error) {
+                showAlert(error.message.replace('Firebase: ', ''));
+            }
+        }
+
+        // Dashboard with real-time updates
+        function loadDashboardData() {
+            // Total users
+            onSnapshot(collection(db, "users"), (snap) => {
+                document.getElementById('total-users').textContent = snap.size;
+                
+                // New users today
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const newUsers = Array.from(snap.docs).filter(doc => {
+                    const createdAt = doc.data().createdAt?.toDate();
+                    return createdAt && createdAt >= today;
+                }).length;
+                document.getElementById('new-users-today').textContent = newUsers;
+            });
+            
+            // Total balance
+            onSnapshot(collection(db, "users"), (snap) => {
+                let total = 0;
+                snap.forEach(doc => total += doc.data().balance || 0);
+                document.getElementById('total-balance').textContent = total.toLocaleString();
+            });
+            
+            // Pending withdrawals
+            const pendingQuery = query(collection(db, "withdrawals"), where("status", "==", "pending"));
+            onSnapshot(pendingQuery, (snap) => {
+                document.getElementById('pending-withdrawals').textContent = snap.size;
+                let total = 0;
+                snap.forEach(doc => total += doc.data().amount || 0);
+                document.getElementById('pending-amount').textContent = total.toLocaleString();
+            });
+            
+            // Today's earnings
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const earningsQuery = query(collection(db, "withdrawals"), where("requestedAt", ">=", today));
+            onSnapshot(earningsQuery, (snap) => {
+                let total = 0;
+                snap.forEach(doc => total += doc.data().amount || 0);
+                document.getElementById('today-earnings').textContent = total.toLocaleString();
+            });
+            
+            // Recent activity
+            loadRecentActivity();
+        }
+
+        async function loadRecentActivity() {
+            const activities = [];
+            
+            // Recent users
+            const usersQuery = query(collection(db, "users"), orderBy("createdAt", "desc"), limit(5));
+            const usersSnap = await getDocs(usersQuery);
+            usersSnap.forEach(doc => {
+                activities.push({
+                    type: 'user',
+                    text: `New user registered: ${doc.data().email}`,
+                    time: doc.data().createdAt?.toDate()
+                });
+            });
+            
+            // Recent withdrawals
+            const withdrawQuery = query(collection(db, "withdrawals"), orderBy("requestedAt", "desc"), limit(5));
+            const withdrawSnap = await getDocs(withdrawQuery);
+            withdrawSnap.forEach(doc => {
+                activities.push({
+                    type: 'withdrawal',
+                    text: `Withdrawal request: ${doc.data().amount} coins`,
+                    time: doc.data().requestedAt?.toDate()
+                });
+            });
+            
+            // Sort by time
+            activities.sort((a, b) => b.time - a.time);
+            
+            const container = document.getElementById('recent-activity');
+            container.innerHTML = activities.slice(0, 5).map(a => `
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div class="bg-${a.type === 'user' ? 'green' : 'yellow'}-100 p-2 rounded-full">
+                        <i data-lucide="${a.type === 'user' ? 'user-plus' : 'dollar-sign'}" class="w-4 h-4 text-${a.type === 'user' ? 'green' : 'yellow'}-600"></i>
+                    </div>
+                    <p class="flex-1">${a.text}</p>
+                    <p class="text-sm text-gray-400">${a.time ? new Date(a.time).toLocaleTimeString() : ''}</p>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Users Management
+        function loadUsers() {
+            const usersTableBody = document.getElementById('users-table-body');
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                usersTableBody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const user = doc.data();
+                    const isBlocked = user.isBlocked || false;
+                    const joinDate = user.createdAt?.toDate().toLocaleDateString() || 'N/A';
+                    
+                    usersTableBody.innerHTML += `<tr class="hover:bg-gray-50">
+                        <td class="font-medium">${user.name || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td><span class="font-bold text-indigo-600">${user.balance || 0}</span></td>
+                        <td>${user.totalReferrals || 0}</td>
+                        <td>${joinDate}</td>
+                        <td><span class="badge ${isBlocked ? 'badge-danger' : 'badge-success'}">${isBlocked ? 'Blocked' : 'Active'}</span></td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button class="btn btn-${isBlocked ? 'success' : 'danger'} text-xs" onclick="window.toggleBlockUser('${doc.id}', ${isBlocked})">${isBlocked ? 'Unblock' : 'Block'}</button>
+                                <button class="btn btn-warning text-xs" onclick="window.adjustBalance('${doc.id}')">Adjust</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+            });
+        }
+
+        window.toggleBlockUser = async (userId, isBlocked) => {
+            const confirmed = await showConfirm(`Are you sure you want to ${isBlocked ? 'unblock' : 'block'} this user?`);
+            if (confirmed) {
+                try {
+                    await updateDoc(doc(db, "users", userId), { isBlocked: !isBlocked });
+                    showAlert(`User has been ${!isBlocked ? 'blocked' : 'unblocked'}.`);
+                } catch (error) {
+                    showAlert(`Error: ${error.message}`);
+                }
+            }
+        };
+
+        window.adjustBalance = async (userId) => {
+            const amount = prompt("Enter amount to add/deduct (use negative for deduction):");
+            if (amount === null) return;
+            
+            const numAmount = parseInt(amount);
+            if (isNaN(numAmount)) return showAlert("Invalid amount.");
+            
+            try {
+                const userRef = doc(db, "users", userId);
+                await updateDoc(userRef, { balance: increment(numAmount) });
+                showAlert(`Balance adjusted by ${numAmount}.`);
+            } catch (error) {
+                showAlert(`Error: ${error.message}`);
+            }
+        };
+
+        // Withdrawals Management
+        function loadWithdrawals() {
+            const withdrawalsTableBody = document.getElementById('withdrawals-table-body');
+            const q = query(collection(db, "withdrawals"), where("status", "==", currentFilter), orderBy("requestedAt", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    withdrawalsTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500 py-8">No requests found.</td></tr>';
+                    return;
+                }
+                
+                withdrawalsTableBody.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const req = docSnap.data();
+                    const date = req.requestedAt?.toDate().toLocaleString() || 'N/A';
+                    const statusColors = {
+                        pending: 'badge-warning',
+                        approved: 'badge-success',
+                        rejected: 'badge-danger'
+                    };
+                    
+                    withdrawalsTableBody.innerHTML += `<tr class="hover:bg-gray-50">
+                        <td class="font-medium">${req.userName || req.userEmail || 'N/A'}</td>
+                        <td><span class="font-bold">${req.amount}</span></td>
+                        <td>${req.method}</td>
+                        <td class="max-w-xs truncate">${req.paymentDetail || 'N/A'}</td>
+                        <td>${date}</td>
+                        <td><span class="badge ${statusColors[req.status]}">${req.status}</span></td>
+                        <td>
+                            ${req.status === 'pending' ? `
+                                <div class="flex gap-2">
+                                    <button class="btn btn-success text-xs" onclick="window.handleWithdrawal('${docSnap.id}', 'approved')">Approve</button>
+                                    <button class="btn btn-danger text-xs" onclick="window.handleWithdrawal('${docSnap.id}', 'rejected')">Reject</button>
+                                </div>
+                            ` : '-'}
+                        </td>
+                    </tr>`;
+                });
+            });
+        }
+
+        window.handleWithdrawal = async (requestId, newStatus) => {
+            const confirmed = await showConfirm(`Are you sure you want to ${newStatus} this request?`);
+            if (!confirmed) return;
+            
+            const requestRef = doc(db, "withdrawals", requestId);
+            const batch = writeBatch(db);
+            
+            try {
+                const requestSnap = await getDoc(requestRef);
+                if (!requestSnap.exists()) return showAlert("Request not found.");
+                
+                const requestData = requestSnap.data();
+                
+                if (newStatus === 'rejected') {
+                    // Refund coins
+                    const userRef = doc(db, "users", requestData.userId);
+                    batch.update(userRef, { balance: increment(requestData.amount) });
+                }
+                
+                batch.update(requestRef, { status: newStatus });
+                await batch.commit();
+                
+                showAlert(`Request has been ${newStatus}.`);
+            } catch (error) {
+                showAlert(`Error: ${error.message}`);
+            }
+        };
+
+        // Transactions
+        async function loadTransactions() {
+            const transactionsBody = document.getElementById('transactions-table-body');
+            
+            // Combine withdrawals and referrals for demo
+            const withdrawalsQuery = query(collection(db, "withdrawals"), orderBy("requestedAt", "desc"), limit(50));
+            const withdrawalsSnap = await getDocs(withdrawalsQuery);
+            
+            transactionsBody.innerHTML = '';
+            withdrawalsSnap.forEach(doc => {
+                const t = doc.data();
+                transactionsBody.innerHTML += `<tr>
+                    <td>${t.userName || t.userEmail}</td>
+                    <td>Withdrawal</td>
+                    <td class="text-red-600">-${t.amount}</td>
+                    <td>${t.requestedAt?.toDate().toLocaleString()}</td>
+                    <td><span class="badge badge-${t.status === 'approved' ? 'success' : t.status === 'rejected' ? 'danger' : 'warning'}">${t.status}</span></td>
+                </tr>`;
+            });
+        }
+
+        // Task Manager
+        async function loadTasks() {
+            const tasksList = document.getElementById('tasks-list');
+            const tasksQuery = query(collection(db, "tasks"), orderBy("createdAt", "desc"));
+            
+            onSnapshot(tasksQuery, (snap) => {
+                if (snap.empty) {
+                    tasksList.innerHTML = '<p class="text-gray-400 text-center py-4">No tasks available.</p>';
+                    return;
+                }
+                
+                tasksList.innerHTML = '';
+                snap.forEach(doc => {
+                    const task = doc.data();
+                    tasksList.innerHTML += `
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold">${task.title}</h4>
+                                <p class="text-sm text-gray-500">${task.description}</p>
+                                <p class="text-sm text-indigo-600 font-bold mt-1">Reward: ${task.reward} coins</p>
+                            </div>
+                            <button class="btn btn-danger text-xs" onclick="window.deleteTask('${doc.id}')">Delete</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        async function addTask() {
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-desc').value;
+            const reward = parseInt(document.getElementById('task-reward').value);
+            const type = document.getElementById('task-type').value;
+            
+            if (!title || !description || !reward) return showAlert("Please fill all fields.");
+            
+            try {
+                await addDoc(collection(db, "tasks"), {
+                    title,
+                    description,
+                    reward,
+                    type,
+                    createdAt: serverTimestamp(),
+                    active: true
+                });
+                
+                showAlert("Task added successfully!");
+                document.getElementById('task-title').value = '';
+                document.getElementById('task-desc').value = '';
+                document.getElementById('task-reward').value = '';
+            } catch (error) {
+                showAlert(`Error: ${error.message}`);
+            }
+        }
+
+        window.deleteTask = async (taskId) => {
+            const confirmed = await showConfirm("Delete this task?");
+            if (confirmed) {
+                try {
+                    await updateDoc(doc(db, "tasks", taskId), { active: false });
+                    showAlert("Task deleted.");
+                } catch (error) {
+                    showAlert(`Error: ${error.message}`);
+                }
+            }
+        };
+
+        // Notifications
+        async function sendNotification() {
+            const title = document.getElementById('notification-title').value;
+            const message = document.getElementById('notification-message').value;
+            const icon = document.getElementById('notification-icon').value;
+            
+            if (!title || !message) return showAlert("Title and message are required.");
+            
+            try {
+                await addDoc(collection(db, "notifications"), {
+                    title,
+                    message,
+                    icon,
+                    createdAt: serverTimestamp()
+                });
+                
+                showAlert("Notification sent to all users!");
+                document.getElementById('notification-title').value = '';
+                document.getElementById('notification-message').value = '';
+            } catch (error) {
+                showAlert(`Error: ${error.message}`);
+            }
+        }
+
+        // Settings
+        async function loadSettings() {
+            const configRef = doc(db, "config", "main");
+            try {
+                const docSnap = await getDoc(configRef);
+                if (docSnap.exists()) {
+                    const config = docSnap.data();
+                    document.getElementById('min-withdrawal').value = config.minWithdrawal || 5000;
+                    document.getElementById('daily-ad-limit').value = config.dailyAdLimit || 10;
+                    document.getElementById('coin-value-coins').value = config.coinValueCoins || 1000;
+                    document.getElementById('coin-value-taka').value = config.coinValueTaka || 10;
+                    document.getElementById('payment-methods').value = (config.paymentMethods || ['bKash', 'Nagad']).join(',');
+                    document.getElementById('welcome-bonus').value = config.welcomeBonus || 50;
+                    document.getElementById('referral-bonus').value = config.referralBonus || 100;
+                }
+            } catch (e) {
+                console.error("Error loading settings: ", e);
+            }
+        }
+
+        async function saveSettings() {
+            const settingsData = {
+                minWithdrawal: parseInt(document.getElementById('min-withdrawal').value) || 5000,
+                dailyAdLimit: parseInt(document.getElementById('daily-ad-limit').value) || 10,
+                coinValueCoins: parseInt(document.getElementById('coin-value-coins').value) || 1000,
+                coinValueTaka: parseFloat(document.getElementById('coin-value-taka').value) || 10,
+                paymentMethods: document.getElementById('payment-methods').value.split(',').map(s => s.trim()).filter(Boolean),
+                welcomeBonus: parseInt(document.getElementById('welcome-bonus').value) || 50,
+                referralBonus: parseInt(document.getElementById('referral-bonus').value) || 100
+            };
+            
+            try {
+                await setDoc(doc(db, "config", "main"), settingsData, { merge: true });
+                showAlert("Settings saved successfully!");
+            } catch (error) {
+                showAlert(`Error: ${error.message}`);
+            }
+        }
+
+        async function resetSettings() {
+            const confirmed = await showConfirm("Reset all settings to default?");
+            if (confirmed) {
+                document.getElementById('min-withdrawal').value = 5000;
+                document.getElementById('daily-ad-limit').value = 10;
+                document.getElementById('coin-value-coins').value = 1000;
+                document.getElementById('coin-value-taka').value = 10;
+                document.getElementById('payment-methods').value = 'bKash,Nagad,Rocket,UPI';
+                document.getElementById('welcome-bonus').value = 50;
+                document.getElementById('referral-bonus').value = 100;
+                showAlert("Settings reset. Click Save to apply.");
+            }
+        }
+
+        // Export Users
+        async function exportUsers() {
+            const usersSnap = await getDocs(collection(db, "users"));
+            let csv = "Name,Email,Balance,Referrals,Joined,Status\n";
+            
+            usersSnap.forEach(doc => {
+                const user = doc.data();
+                csv += `"${user.name || ''}","${user.email}",${user.balance || 0},${user.totalReferrals || 0},"${user.createdAt?.toDate().toLocaleDateString() || ''}","${user.isBlocked ? 'Blocked' : 'Active'}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `users_export_${new Date().toISOString()}.csv`;
+            a.click();
+        }
+
+        // Analytics
+        async function loadAnalytics() {
+            // Daily active users
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            const usersSnap = await getDocs(collection(db, "users"));
+            let activeToday = 0;
+            usersSnap.forEach(doc => {
+                const lastActive = doc.data().lastActiveDate;
+                if (lastActive === today.toISOString().split('T')[0]) activeToday++;
+            });
+            
+            // Average withdrawal
+            const withdrawalsSnap = await getDocs(collection(db, "withdrawals"));
+            let totalAmount = 0, count = 0;
+            withdrawalsSnap.forEach(doc => {
+                totalAmount += doc.data().amount || 0;
+                count++;
+            });
+            document.getElementById('avg-withdrawal').textContent = count ? Math.round(totalAmount/count) : 0;
+            
+            // Conversion rate (users who made withdrawal)
+            const usersWithWithdrawals = new Set();
+            withdrawalsSnap.forEach(doc => usersWithWithdrawals.add(doc.data().userId));
+            const conversionRate = usersSnap.size ? (usersWithWithdrawals.size / usersSnap.size * 100).toFixed(1) : 0;
+            document.getElementById('conversion-rate').textContent = conversionRate + '%';
+            
+            // Retention (simplified)
+            const retention = usersSnap.size ? ((usersSnap.size - activeToday) / usersSnap.size * 100).toFixed(1) : 0;
+            document.getElementById('retention-rate').textContent = retention + '%';
+        }
+
+        // Charts
+        function initCharts() {
+            // User growth chart
+            const ctx1 = document.getElementById('userChart')?.getContext('2d');
+            if (ctx1) {
+                charts.user = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'New Users',
+                            data: [12, 19, 15, 17, 14, 23, 20],
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+            
+            const ctx2 = document.getElementById('withdrawalChart')?.getContext('2d');
+            if (ctx2) {
+                charts.withdrawal = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Pending', 'Approved', 'Rejected'],
+                        datasets: [{
+                            label: 'Withdrawals',
+                            data: [5, 20, 3],
+                            backgroundColor: ['#f59e0b', '#10b981', '#ef4444']
+                        }]
+                    }
+                });
+            }
+            
+            const ctx3 = document.getElementById('dailyActiveChart')?.getContext('2d');
+            if (ctx3) {
+                charts.active = new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Active Users',
+                            data: [65, 75, 80, 78, 82, 90, 95],
+                            borderColor: '#10b981'
+                        }]
+                    }
+                });
+            }
+            
+            const ctx4 = document.getElementById('revenueChart')?.getContext('2d');
+            if (ctx4) {
+                charts.revenue = new Chart(ctx4, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Ad Revenue', 'Referrals', 'Other'],
+                        datasets: [{
+                            data: [70, 20, 10],
+                            backgroundColor: ['#4f46e5', '#10b981', '#f59e0b']
+                        }]
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
